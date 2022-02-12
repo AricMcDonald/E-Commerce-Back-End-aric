@@ -30,7 +30,7 @@ router.get('/', (req, res) => {
       res.status(500).json(err);
 
 });
-
+});
 // get one product
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
@@ -40,7 +40,8 @@ router.get('/:id', (req, res) => {
       id: req.params.id
 
   },
-  include:[{
+  include:[
+    {
     model: Category,
     attributes: ['category_name']
   },
@@ -50,12 +51,18 @@ router.get('/:id', (req, res) => {
   }
   ]
 })
-    .then(productData => res.json(productData))
+    .then(productData => {
+      if(!productData) {
+        res.status(404).json({ message:'no category found for this id'});
+        return;
+      }
+      res.json(productData);
+    })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
 });
-
+});
 // create new product
 router.post('/', (req, res) => {
   /* req.body should look like this...
@@ -147,6 +154,6 @@ router.delete('/:id', (req, res) => {
 .catch(err => {
   console.log(err);
   res.status(500).json(err);
-  
-
+});
+});
 module.exports = router;
